@@ -7,6 +7,7 @@ import java.util.Set;
 
 import engine.Cooldown;
 import engine.Core;
+import engine.DrawManager.SpriteType;
 import engine.GameSettings;
 import engine.GameState;
 import entity.Bullet;
@@ -298,48 +299,58 @@ public class GameScreen extends Screen {
 	/**
 	* Manages collisions between bullets and ships.
 	*/
-	private void manageCollisions() {
-		Set<Bullet> recyclable = new HashSet<Bullet>();
-		for (Bullet bullet : this.bullets)
-		if (bullet.getSpeed() > 0) {
-			if (checkCollision(bullet, this.ship) && !this.levelFinished) {
-				recyclable.add(bullet);
-				if (!this.ship.isDestroyed()) {
-					this.ship.destroy();
-					this.lives--;
-					this.logger.info("Hit on player ship, " + this.lives
-					+ " lives remaining.");
-				}
-			}
-		} else {
-			for (EnemyShip enemyShip : this.enemyShipFormation)
-			if (!enemyShip.isDestroyed()
-			&& checkCollision(bullet, enemyShip)) {
-				this.score += enemyShip.getPointValue();
-				this.shipsDestroyed++;
-				this.enemyShipFormation.destroy(enemyShip);
-				recyclable.add(bullet);
-			}
-			if (this.enemyShipSpecial != null
-			&& !this.enemyShipSpecial.isDestroyed()
-			&& checkCollision(bullet, this.enemyShipSpecial)) {
-				this.score += this.enemyShipSpecial.getPointValue();
-				this.shipsDestroyed++;
-				this.enemyShipSpecial.destroy();
-				this.enemyShipSpecialExplosionCooldown.reset();
-				recyclable.add(bullet);
-			}
-
-			for (Obstacle obstacle : this.obstacles) {
-                if (!obstacle.isDestroyed() && checkCollision(bullet, obstacle)) {
-                    obstacle.destroy(); // Destroy obstacle
-                    recyclable.add(bullet); // Remove bullet
+private void manageCollisions() {
+    Set<Bullet> recyclable = new HashSet<Bullet>();
+    for (Bullet bullet : this.bullets)
+        if (bullet.getSpeed() > 0) {
+            if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+                recyclable.add(bullet);
+                if (!this.ship.isDestroyed()) {
+                    this.ship.destroy();
+                    this.lives--;
+                    this.logger.info("Hit on player ship, " + this.lives + " lives remaining.");
                 }
             }
-		}
-		this.bullets.removeAll(recyclable);
-		BulletPool.recycle(recyclable);
-	}
+        } else {
+            for (EnemyShip enemyShip : this.enemyShipFormation)
+                if (!enemyShip.isDestroyed() && checkCollision(bullet, enemyShip)) {
+                    this.score += enemyShip.getPointValue();
+                    this.shipsDestroyed++;
+                    this.enemyShipFormation.destroy(enemyShip);
+                    recyclable.add(bullet);
+                }
+            if (this.enemyShipSpecial != null && !this.enemyShipSpecial.isDestroyed()
+                    && checkCollision(bullet, this.enemyShipSpecial)) {
+                this.score += this.enemyShipSpecial.getPointValue();
+                this.shipsDestroyed++;
+                this.enemyShipSpecial.destroy();
+                this.enemyShipSpecialExplosionCooldown.reset();
+                recyclable.add(bullet);
+            }
+            for (Obstacle obstacle : this.obstacles) {
+                if (!obstacle.isDestroyed() && checkCollision(bullet, obstacle)) {
+                    obstacle.destroy();  // Destroy obstacle
+                    recyclable.add(bullet);  // Remove bullet
+                }
+            }
+        }
+
+    for (Obstacle obstacle : this.obstacles) {
+        if (!obstacle.isDestroyed() && checkCollision(this.ship, obstacle)) {
+            this.lives--;
+            obstacle.destroy();  // Destroy obstacle
+            this.logger.info("Ship hit an obstacle, " + this.lives + " lives remaining.");
+            if (!this.ship.isDestroyed()) {
+                this.ship.destroy();  // Optionally, destroy the ship or apply other effects.
+            }
+            break;  // Stop further collisions if the ship is destroyed.
+        }
+    }
+
+    this.bullets.removeAll(recyclable);
+    BulletPool.recycle(recyclable);
+}
+
 	
 	/**
 	* Checks if two entities are colliding.
