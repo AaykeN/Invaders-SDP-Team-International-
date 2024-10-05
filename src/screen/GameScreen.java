@@ -171,9 +171,14 @@ public class GameScreen extends Screen {
 			}
 			
 			// --- OBSTACLES
-			for (Obstacle obstacle : this.obstacles) {
-				obstacle.update(); // Make obstacles move or perform actions
-			}
+        Set<Obstacle> obstaclesToRemove = new HashSet<>();
+        for (Obstacle obstacle : this.obstacles) {
+            obstacle.update(); // Make obstacles move or perform actions
+            if (obstacle.shouldBeRemoved()) {
+                obstaclesToRemove.add(obstacle);  // Mark obstacle for removal after explosion
+            }
+        }
+        this.obstacles.removeAll(obstaclesToRemove);  
 			
 			if (!this.ship.isDestroyed()) {
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
