@@ -45,13 +45,13 @@ public class Obstacle extends Entity {
     /**
      * Updates the obstacle's movement or other attributes.
      */
-    public final void update() {
+    public final void update(int level) {
         if (!this.isDestroyed) {
             // If the obstacle is not destroyed, move or perform other actions
             if (this.movementCooldown.checkFinished()) {
                 this.movementCooldown.reset();
-                this.positionY += 15; // Change obstacle speed
-            }
+            int speed = 10 + (level * 2);  // Base speed is 10, increases by 2 per level.
+            this.positionY += speed;            }
         } else {
             // If destroyed, check if the explosion animation should finish
             if (this.explosionCooldown != null && this.explosionCooldown.checkFinished()) {
