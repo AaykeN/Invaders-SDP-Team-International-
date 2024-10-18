@@ -259,7 +259,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					+ this.height + RADIUS > screen.getHeight() - BOTTOM_MARGIN;
 			boolean isAtRightSide = positionX
 					+ this.width + RADIUS >= screen.getWidth() - SIDE_MARGIN;
-			boolean isAtLeftSide = positionX - RADIUS <= SIDE_MARGIN;
+			boolean isAtLeftSide = positionX - RADIUS - MINIRADIUS*3/4 <= SIDE_MARGIN;
 			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
 
 			if (currentDirection == Direction.DOWN) {
