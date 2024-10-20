@@ -21,8 +21,6 @@ import engine.DrawManager.SpriteType;
 import engine.GameSettings;
 import static java.lang.Math.*;
 import Enemy.PiercingBulletPool;
-//Sound_Operator
-import Sound_Operator.SoundManager;
 /**
  * Groups enemy ships into a formation that moves together.
  * 
@@ -147,7 +145,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<EnemyShip>();
 		SpriteType spriteType = null;
-    int hp=1;// Edited by Enemy
+		int hp=1;// Edited by Enemy
 		Random rand= new Random();
 		int n = rand.nextInt(2);
 		if(n%2==1){ isCircle=true;
@@ -170,7 +168,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			int x=0;
 			int y=0;
 			for (int i = 0; i < this.nShipsHigh; i++) {
-				double angle = 2* PI * i / this.nShipsHigh;
+				double angle = 2* Math.PI * i / this.nShipsHigh;
 
 				if (i / (float) this.nShipsHigh < PROPORTION_C)
         if (shipCount == (nShipsHigh*1)+1 ||shipCount == (nShipsHigh*3)+1) //Edited by Enemy
@@ -182,13 +180,14 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				else
 					spriteType = SpriteType.EnemyShipA1;
 				if(isCircle){
-				x = (int) round(RADIUS * cos(angle) + positionX + ( SEPARATION_DISTANCE_CIRCLE* this.enemyShips.indexOf(column)));
-				y = (int) (RADIUS * sin(angle)) + positionY;}
+				x = (int) Math.round(RADIUS * Math.cos(angle) + positionX + ( SEPARATION_DISTANCE_CIRCLE* this.enemyShips.indexOf(column)));
+				y = (int) (RADIUS * Math.sin(angle)) + positionY;}
 				else{
 					x = positionX + (SEPARATION_DISTANCE * this.enemyShips.indexOf(column));
 					y = positionY+ i*SEPARATION_DISTANCE;
 				}
-
+				//column.add(new EnemyShip(x, y, spriteType));
+        
 				if(shipCount == nShipsHigh*(nShipsWide/2))
 					hp = 2; // Edited by Enemy, It just an example to insert EnemyShip that hp is 2.
 
@@ -248,7 +247,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		int movementY = 0;
 		double remainingProportion = (double) this.shipCount
 				/ (this.nShipsHigh * this.nShipsWide);
-		this.movementSpeed = (int) (pow(remainingProportion, 2)
+		this.movementSpeed = (int) (Math.pow(remainingProportion, 2)
 				* this.baseSpeed);
 		this.movementSpeed += MINIMUM_SPEED;
 		
@@ -256,17 +255,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (movementInterval >= this.movementSpeed) {
 			movementInterval = 0;
 
-			int circleFormationPadding = 0;
-
-			if (isCircle) {
-				circleFormationPadding = 45;
-			}
-
 			boolean isAtBottom = positionY
 					+ this.height + RADIUS > screen.getHeight() - BOTTOM_MARGIN;
 			boolean isAtRightSide = positionX
 					+ this.width + RADIUS >= screen.getWidth() - SIDE_MARGIN;
-			boolean isAtLeftSide = positionX - RADIUS - circleFormationPadding <= SIDE_MARGIN;
+			boolean isAtLeftSide = positionX - RADIUS - MINIRADIUS*3/4 <= SIDE_MARGIN;
 			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
 
 			if (currentDirection == Direction.DOWN) {
@@ -325,26 +318,16 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				}
 				column.removeAll(destroyed);
 			}
-			double angle = (PI/this.nShipsHigh);
+			double angle = (Math.PI/this.nShipsHigh);
 			int temp=0;
 			iteration++;
 			for (List<EnemyShip> column : this.enemyShips){
 				temp=0;
 				for (EnemyShip enemyShip : column) {
 					double currentAngle = angle * (temp+iteration);
-					int distanceX = movementX + (int) (MINIRADIUS * cos(currentAngle));
-					int distanceY = movementY + (int) (MINIRADIUS * sin(currentAngle));
-
-					if (distanceX + enemyShip.positionX > screen.getWidth() - SIDE_MARGIN || distanceX + enemyShip.positionX < SIDE_MARGIN) {
-						distanceX = 0;
-
-					} else if (distanceY + enemyShip.positionY > screen.getHeight() - BOTTOM_MARGIN) {
-						distanceY = 0;
-					}
-
 					enemyShip.move(
-							distanceX,
-							distanceY
+							movementX+(int) (MINIRADIUS * Math.cos(currentAngle)),
+							movementY+(int) (MINIRADIUS * Math.sin(currentAngle))
 					);
 					enemyShip.update();
 					temp++;
@@ -365,8 +348,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				// Height of this column
 				int columnSize = column.get(column.size() - 1).positionY
 						- this.positionY + this.shipHeight;
-				maxColumn = max(maxColumn, columnSize);
-				minPositionY = min(minPositionY, column.get(0)
+				maxColumn = Math.max(maxColumn, columnSize);
+				minPositionY = Math.min(minPositionY, column.get(0)
 						.getPositionY());
 			} else {
 				// Empty column, we remove it.
@@ -404,7 +387,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final void shoot(final Set<PiercingBullet> bullets) { // Edited by Enemy
 		// For now, only ships in the bottom row are able to shoot.
-		int index = (int) (random() * this.shooters.size());
+		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
@@ -505,7 +488,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
 	}
-
+	
 	/**
 	 * When EnemyShip is hit, its HP decrease by 1, and if the HP reaches 0, the ship is destroyed.
 	 *
@@ -537,13 +520,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						switch (destroyedShip.spriteType){
 							case ExplosiveEnemyShip1:
 							case ExplosiveEnemyShip2:
-								HpEnemyShip.hit(destroyedShip);
-								//Sound_Operator
-								if (destroyedShip.isDestroyed()) {
-
-									sm = SoundManager.getInstance();
-									sm.playES("enemy_explosion");
-								}
 								destroyedShip.chainExplode(); // Edited by team Enemy
 								explosive(destroyedShip.getX(), destroyedShip.getY(),this.enemyShips.indexOf(column),i); //Add by team Enemy
 								// HpEnemyShip.hit(destroyedShip);
@@ -625,7 +601,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 
 	public void explosive(final int x, final int y,final int index_x, final int index_y) {
-		Timer timer = new Timer(200, null);
+		javax.swing.Timer timer = new javax.swing.Timer(200, null);
 		final int[] i = {1};
 
 
