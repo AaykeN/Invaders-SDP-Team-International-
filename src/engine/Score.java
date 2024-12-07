@@ -1,7 +1,6 @@
 package engine;
 
 import clove.Statistics;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.time.LocalDate;
@@ -10,8 +9,6 @@ import screen.GameScreen;
 
 /**
  * Implements a high score record.
- * 
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
 public class Score implements Comparable<Score> {
@@ -26,27 +23,20 @@ public class Score implements Comparable<Score> {
 	private int Year;
 	private int Month;
 	private int Day;
-	/** String for storage present Date */
-	private String Date;
+	private String Date; //String for storage present Date 
 
-	/** highest level that player reached */
-    private int highestLevel;
-	/** ship number that player destroyed */
-	private int totalShipDestroyed;
-	/** achievement number that player cleared */
-	private int clearAchievementNumber;
-	/** Time for Total level clear time(player has done) */
-	private long playTime;
+    private int highestLevel; //Highest level that player reached
+	private int totalShipDestroyed; //Number of ship destroyed
+	private int clearAchievementNumber; //achievement number that player cleared 
+	private long playTime; //Time for Total level clear time(player has done)
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param name
-	 *            Player name, three letters.
-	 * @param score
-	 *            Player score.
-	 * Added non-parameter elements for Date // Clove
-	 * Added load statistics for save recent score // Clove
+	 * @param name Player name, three letters
+	 * @param score Player score
+	 * Added non-parameter elements for Date
+	 * Added load statistics for save recent score 
 	 */
 	public Score(final String name, final int score) {
 		this.name = name;
@@ -73,18 +63,12 @@ public class Score implements Comparable<Score> {
 	/**
 	 * Constructor for read/write Recent Record files
 	 *
-	 * @param name
-	 * 				Player name but non-value parameter, just for overload constructor
-	 * @param score
-	 * 				Player score
-	 * @param date
-	 * 				Date (especially Time Player played the game.
-	 * @param highestLevel
-	 * 				Player reached level.
-	 * @param totalShipDestroyed
-	 * 				Number of Destroyed Ship.
-	 * @param clearAchievementNumber
-	 * 				Number of Cleared Achievement.
+	 * @param name Player name but non-value parameter, just for overload constructor
+	 * @param score Player score
+	 * @param date Date (especially Time Player played the game
+	 * @param highestLevel Player reached level
+	 * @param totalShipDestroyed Number of Destroyed Ship
+	 * @param clearAchievementNumber Number of Cleared Achievement
 	 */
 	public Score(final String name, final int score, final String date, int highestLevel,
 				 final int totalShipDestroyed, final int clearAchievementNumber) {
@@ -146,10 +130,8 @@ public class Score implements Comparable<Score> {
 	/**
 	 * Orders the scores descending by score.
 	 * 
-	 * @param score
-	 *            Score to compare the current one with.
-	 * @return Comparison between the two scores. Positive if the current one is
-	 *         smaller, positive if its bigger, zero if its the same.
+	 * @param score Score to compare the current one with.
+	 * @return Comparison between the two scores. Positive if the current one is smaller, positive if its bigger, zero if its the same.
 	 */
 
 	@Override

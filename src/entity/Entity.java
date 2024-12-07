@@ -12,32 +12,22 @@ import engine.DrawManager.SpriteType;
  */
 public abstract class Entity {
 
-	/** Position in the x-axis of the upper left corner of the entity. */
-	protected int positionX;
-	/** Position in the y-axis of the upper left corner of the entity. */
-	protected int positionY;
-	/** Width of the entity. */
-	protected int width;
-	/** Height of the entity. */
-	protected int height;
-	/** Color of the entity. */
-	private Color color;
-	/** Sprite type assigned to the entity. */
-	protected SpriteType spriteType;
+	protected int positionX; // Position in the x-axis of the upper left corner of the entity.
+	protected int positionY; //  Position in the y-axis of the upper left corner of the entity. 
+	protected int width; // Width of the entity.
+	protected int height; // Height of the entity.
+	private Color color; // Color of the entity
+	protected SpriteType spriteType; // Sprite type assigned to the entity.
 
 	/**
 	 * Constructor, establishes the entity's generic properties.
 	 * 
-	 * @param positionX
-	 *            Initial position of the entity in the X axis.
-	 * @param positionY
-	 *            Initial position of the entity in the Y axis.
-	 * @param width
-	 *            Width of the entity.
-	 * @param height
-	 *            Height of the entity.
-	 * @param color
-	 *            Color of the entity.
+	 * @param positionX Initial position of the entity in the X axis.
+	 * @param positionY  Initial position of the entity in the Y axis.
+	 * @param width Width of the entity.
+	 * @param height Height of the entity.
+	 * @param color Color of the entity.
+	 *            
 	 */
 
 	public void setSpriteType(SpriteType spriteType) {
@@ -93,8 +83,8 @@ public abstract class Entity {
 	/**
 	 * Setter for the X axis position of the entity.
 	 * 
-	 * @param positionX
-	 *            New position of the entity in the X axis.
+	 * @param positionX New position of the entity in the X axis.
+	 *            
 	 */
 	public final void setPositionX(final int positionX) {
 		this.positionX = positionX;
@@ -103,8 +93,8 @@ public abstract class Entity {
 	/**
 	 * Setter for the Y axis position of the entity.
 	 * 
-	 * @param positionY
-	 *            New position of the entity in the Y axis.
+	 * @param positionY New position of the entity in the Y axis.
+	 *            
 	 */
 	public final void setPositionY(final int positionY) {
 		this.positionY = positionY;

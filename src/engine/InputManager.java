@@ -6,17 +6,12 @@ import java.awt.event.KeyListener;
 /**
  * Manages keyboard input for the provided screen.
  * 
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
  */
 public final class InputManager implements KeyListener {
 
-	/** Number of recognised keys. */
-	private static final int NUM_KEYS = 256;
-	/** Array with the jeys marked as pressed or not. */
-	private static boolean[] keys;
-	/** Singleton instance of the class. */
-	private static InputManager instance;
+	private static final int NUM_KEYS = 256; //Number of recognised keys
+	private static boolean[] keys; //Array with the keys marked as pressed or not
+	private static InputManager instance; //Singleton instance of the class.
 
 	/**
 	 * Private constructor.
@@ -38,9 +33,7 @@ public final class InputManager implements KeyListener {
 
 	/**
 	 * Returns true if the provided key is currently pressed.
-	 * 
-	 * @param keyCode
-	 *            Key number to check.
+	 * @param keyCode Key number to check.
 	 * @return Key state.
 	 */
 	public boolean isKeyDown(final int keyCode) {
@@ -62,8 +55,8 @@ public final class InputManager implements KeyListener {
 	/**
 	 * Changes the state of the key to not pressed.
 	 * 
-	 * @param key
-	 *            Key released.
+	 * @param key Key released.
+	 *            
 	 */
 	@Override
 	public void keyReleased(final KeyEvent key) {
@@ -74,8 +67,7 @@ public final class InputManager implements KeyListener {
 	/**
 	 * Does nothing.
 	 * 
-	 * @param key
-	 *            Key typed.
+	 * @param key Key typed
 	 */
 	@Override
 	public void keyTyped(final KeyEvent key) {

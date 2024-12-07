@@ -26,9 +26,6 @@ import twoplayermode.TwoPlayerMode;
 
 /**
  * Implements core game logic.
- * 
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
  */
 public final class Core {
 

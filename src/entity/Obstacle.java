@@ -11,12 +11,9 @@ import engine.DrawManager.SpriteType;
 */
 public class Obstacle extends Entity {
     
-    /** Cooldown for obstacle movement or other features. */
-    private Cooldown movementCooldown;
-    /** Cooldown for the explosion animation. */
-    private Cooldown explosionCooldown;
-    /** Checks if the obstacle has been destroyed by a bullet. */
-    private boolean isDestroyed;
+    private Cooldown movementCooldown; //Controls movement speed
+    private Cooldown explosionCooldown; //Controls explosion duration
+    private boolean isDestroyed; //Checks if the obstacle has been destroyed by a bullet
     
     /**
     * Constructor, establishes the obstacle's properties.
@@ -47,8 +44,7 @@ public class Obstacle extends Entity {
     */
     public final void update(int level) {
         if (!this.isDestroyed) {
-            // Set speed based on the level
-            int speed = 2 + (level / 2);  // Adjust so it increases by 1 every two levels
+            int speed = 2 + (level / 2);  // Set speed based on the level
             this.positionY += speed; // Moves the obstacle down continuously
         } else {
             // If destroyed, check if the explosion animation should finish
@@ -64,14 +60,13 @@ public class Obstacle extends Entity {
     public final void destroy() {
         if (!this.isDestroyed) {
             this.isDestroyed = true;
-            this.spriteType = SpriteType.Explosion;  // Set sprite to explosion
-            this.explosionCooldown = Core.getCooldown(500);  // Explosion lasts for 500 ms (adjust as needed)
+            this.spriteType = SpriteType.Explosion;  
+            this.explosionCooldown = Core.getCooldown(500);  // Explosion lasts for 500ms
             this.explosionCooldown.reset();
         }
     }
     
     /**
-    * Checks if the obstacle has been destroyed.
     * 
     * @return True if the obstacle has been destroyed.
     */
@@ -80,11 +75,10 @@ public class Obstacle extends Entity {
     }
     
     /**
-    * Checks if the obstacle should be removed after explosion animation.
     * 
     * @return True if the obstacle can be removed.
     */
     public final boolean shouldBeRemoved() {
-        return this.isDestroyed && this.spriteType == null;  // Remove when spriteType is null after explosion
+        return this.spriteType == null;  // Remove when spriteType is null after explosion
     }
 }

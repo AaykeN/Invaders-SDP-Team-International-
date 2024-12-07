@@ -32,8 +32,7 @@ public class HpEnemyShip {
 
     /**
      * Determine the color of the ship according to hp
-     * @param hp
-     * 			The ship's hp
+     * @param hp The ship's hp
      * @return if hp is 2, return yellow
      * 		   if hp is 3, return orange
      * 		   if hp is 1, return white
@@ -53,8 +52,7 @@ public class HpEnemyShip {
 
     /**
      * When the EnemyShip is hit and its hp reaches 0, destroy the ship
-     * @param enemyShip
-     *          The ship that was hit
+     * @param enemyShip The ship that was hit
      */
     public static void hit(EnemyShip enemyShip) {
         int hp = enemyShip.getHp();
