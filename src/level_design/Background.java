@@ -6,7 +6,7 @@ import java.util.List;
 import engine.Frame;
 
 public class Background {
-    private static Background instance;
+    static Background instance;
 
     private int backgroundWidth;
     private int backgroundHeight;
