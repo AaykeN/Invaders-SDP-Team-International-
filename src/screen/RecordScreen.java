@@ -4,8 +4,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.List;
 
-import engine.Score;
-import engine.Core;
+import core.Score;
+import core.Core;
 
 /**
  *  Implements past user recorded score

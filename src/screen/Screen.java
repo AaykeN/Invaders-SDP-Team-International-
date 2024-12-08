@@ -4,12 +4,12 @@ import java.awt.Insets;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import HUDTeam.DrawAchievementHud;
-import HUDTeam.DrawManagerImpl;
-import engine.Cooldown;
-import engine.Core;
-import engine.DrawManager;
-import engine.InputManager;
+import hud.DrawAchievementHud;
+import hud.DrawManagerImpl;
+import core.Cooldown;
+import core.Core;
+import core.DrawManager;
+import core.InputManager;
 
 /**
  * Implements a generic screen.

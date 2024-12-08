@@ -6,26 +6,29 @@ import java.util.*;
 
 import java.io.IOException;
 
-import CtrlS.RoundState;
-import clove.AchievementConditions;
-import clove.Statistics;
-import Enemy.*;
-import HUDTeam.DrawAchievementHud;
-import HUDTeam.DrawManagerImpl;
-import engine.*;
-import entity.Bullet;
-import entity.BulletPool;
-import entity.EnemyShip;
-import entity.EnemyShipFormation;
-import entity.Entity;
-import entity.Obstacle;
-import entity.Ship;
+import achievement.AchievementConditions;
+import achievement.Statistics;
+import hud.DrawManagerImpl;
+import core.*;
+import entities.bullet.Bullet;
+import entities.bullet.BulletPool;
+import entities.bullet.PiercingBullet;
+import entities.bullet.PiercingBulletPool;
+import entities.enemy.EnemyShip;
+import entities.enemy.EnemyShipFormation;
+import entities.base.Entity;
+import entities.base.Obstacle;
+import entities.item.Fever;
+import entities.item.Item;
+import entities.item.Barrier;
+import entities.item.Speed;
+import entities.player.Ship;
 // shield and heart recovery
-import inventory_develop.*;
+import inventory.ItemManager;
 // Sound Operator
-import Sound_Operator.SoundManager;
-import clove.ScoreManager;    // CLOVE
-import twoplayermode.TwoPlayerMode;
+import sounds.SoundManager;
+import achievement.ScoreManager;    // CLOVE
+import multiplayer.TwoPlayerMode;
 
 
 /**
@@ -73,10 +76,10 @@ public class GameScreen extends Screen {
 	/** Add an itemManager Instance */
 	public static ItemManager itemManager; //by Enemy team
 	/** Shield item */
-	private ItemBarrierAndHeart item;	// team Inventory
-	private FeverTimeItem feverTimeItem;
+	private Barrier item;	// team Inventory
+	private Fever fever;
 	/** Speed item */
-	private SpeedItem speedItem;
+	private Speed speed;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -183,9 +186,9 @@ public class GameScreen extends Screen {
 			this.livestwo++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
-		this.item = new ItemBarrierAndHeart();   // team Inventory
-		this.feverTimeItem = new FeverTimeItem(); // team Inventory
-		this.speedItem = new SpeedItem();   // team Inventory
+		this.item = new Barrier();   // team Inventory
+		this.fever = new Fever(); // team Inventory
+		this.speed = new Speed();   // team Inventory
 		this.coin = gameState.getCoin(); // Team-Ctrl-S(Currency)
 		this.gem = gameState.getGem(); // Team-Ctrl-S(Currency)
 		this.hitCount = gameState.getHitCount(); //CtrlS
@@ -351,8 +354,8 @@ public class GameScreen extends Screen {
 			}
 
 			this.item.updateBarrierAndShip(this.ship);   // team Inventory
-			this.speedItem.update();         // team Inventory
-			this.feverTimeItem.update();
+			this.speed.update();         // team Inventory
+			this.fever.update();
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 		}
@@ -653,7 +656,7 @@ public class GameScreen extends Screen {
 
 						if(enemyShip.getHp() <= 0) {
 							//inventory_f fever time is activated, the score is doubled.
-							if(feverTimeItem.isActive()) {
+							if(fever.isActive()) {
 								feverScore = feverScore * 10;
 							}
 							this.shipsDestroyed++;
@@ -698,7 +701,7 @@ public class GameScreen extends Screen {
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
 					int feverSpecialScore = enemyShipSpecial.getPointValue();
           			// inventory - Score bonus when acquiring fever items
-					if (feverTimeItem.isActive()) { feverSpecialScore *= 10; } //TEAM CLOVE //Team inventory
+					if (fever.isActive()) { feverSpecialScore *= 10; } //TEAM CLOVE //Team inventory
 
 					// CtrlS - If collision occur then check the bullet can process
 					if (!processedFireBullet.contains(bullet.getFire_id())) {
@@ -827,12 +830,12 @@ public class GameScreen extends Screen {
 		return ship;
 	}	// Team Inventory(Item)
 
-	public ItemBarrierAndHeart getItem() {
+	public Barrier getItem() {
 		return item;
 	}	// Team Inventory(Item)
 
-	public FeverTimeItem getFeverTimeItem() {
-		return feverTimeItem;
+	public Fever getFeverTimeItem() {
+		return fever;
 	} // Team Inventory(Item)
 	/**
 	 * Check remaining enemies
@@ -851,7 +854,7 @@ public class GameScreen extends Screen {
 	} // by HUD team SeungYun
 
 
-	public SpeedItem getSpeedItem() {
-		return this.speedItem;
+	public Speed getSpeedItem() {
+		return this.speed;
 	}
 }
