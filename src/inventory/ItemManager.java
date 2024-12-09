@@ -1,45 +1,42 @@
-package inventory;
+package Enemy;
 
-import core.Core;
-import entities.enemy.EnemyShip;
-import entities.item.Item;
-import entities.player.PlayerGrowth;
-import entities.player.Ship;
-import entities.item.Bomb;
-import entities.item.Fever;
+import engine.Core;
+import entity.EnemyShip;
+import entity.Ship;
+import inventory_develop.Bomb;
+import inventory_develop.FeverTimeItem;
 import screen.GameScreen;
-import core.DrawManager;
-
+import engine.DrawManager;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import inventory_develop.ItemBarrierAndHeart;
+import inventory_develop.NumberOfBullet;
+import inventory_develop.SpeedItem;
+import CtrlS.CurrencyManager;
+import Sound_Operator.SoundManager; // Sound Operator
 
-//import entities.item.Bomb;
-import entities.item.Barrier;
-import entities.bullet.NumberOfBullet;
-import entities.item.Speed;
-
-import utils.CurrencyManager;
-
-// Sound Operator
-import sounds.SoundManager;
-
-
+/**
+ * Manages all item-related logic, including item spawning, drawing, 
+ * interaction with the player, and recycling items.
+ */
 public class ItemManager {
 
-    public Set<Item> items;
-    private int screenHeight;
+    public Set<Item> items; //Active items in the game.
+    private int screenHeight; //Screen height for bounds checking.
     private DrawManager drawManager;
-    private GameScreen gameScreen;
-    protected Logger logger = Core.getLogger();
+    private GameScreen gameScreen; // Reference to the main game screen.
+    protected Logger logger = Core.getLogger(); //Logger for debug and info messages.
     private Set<Item> recyclableItems = new HashSet<>();
-    private Set<EnemyShip> enemyShips;
-    private Barrier Item2;
+    private Set<EnemyShip> enemyShips; //Reference to current enemy ships in the game.
+    private ItemBarrierAndHeart Item2;
     private NumberOfBullet numberOfBullet;
-    private Speed speed;
+    private SpeedItem speedItem;
     private Ship ship;
     private PlayerGrowth growth;
-    private Fever fever;
+    private FeverTimeItem feverTimeItem;
     private CurrencyManager currencyManager;
     // Sound Operator
     private static SoundManager sm;
@@ -49,19 +46,19 @@ public class ItemManager {
         this.screenHeight = screenHeight;
         this.drawManager = drawManager;
         this.gameScreen = gameScreen;
-        this.ship = gameScreen.getShip();       // Team Inventory
+        this.ship = gameScreen.getShip();
         this.growth = ship.getPlayerGrowth();
         this.Item2 = gameScreen.getItem();
-        this.fever = gameScreen.getFeverTimeItem();
+        this.feverTimeItem = gameScreen.getFeverTimeItem();
         this.numberOfBullet = new NumberOfBullet();
-        this.speed = gameScreen.getSpeedItem();
+        this.speedItem = gameScreen.getSpeedItem();
         this.enemyShips = new HashSet<>();
     }
 
     public void cleanItems() {
         Set<Item> recyclable = new HashSet<>();
         for (Item item : this.items) {
-            item.update();
+            item.update(); // Update item position or state.
             if (item.getPositionY() > screenHeight) {
                 recyclable.add(item);
             }
@@ -74,6 +71,9 @@ public class ItemManager {
         this.items = new HashSet<>();
     }
 
+    /**
+     * Renders all active items on the screen.
+     */
     public void drawItems() {
         for (Item item : this.items) {
             drawManager.drawEntity(item, item.getPositionX(), item.getPositionY());
@@ -91,7 +91,6 @@ public class ItemManager {
         this.enemyShips = enemyShips;
     }
 
-    // team Inventory
     public void OperateItem(Item item) {
         if(item!= null) {
 
@@ -101,29 +100,25 @@ public class ItemManager {
                 case ItemBomb:
                     Bomb.setIsbomb(true);
                     Bomb.setCanShoot(true);
-                    //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");
                     break;
                 case ItemBarrier:
                     Item2.activatebarrier();
-                    //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");
                     break;
                 case ItemHeart:
                     Item2.activeheart(gameScreen);
-                    //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");
                     break;
                 case ItemFeverTime:
-                    fever.activate();
+                    feverTimeItem.activate();
                     break;
                 case ItemPierce:
                     numberOfBullet.pierceup();
                     ship.increaseBulletSpeed();
-                    //Sound_Operator
                     sm = SoundManager.getInstance();
                     sm.playES("get_item");
                     break;
@@ -131,10 +126,10 @@ public class ItemManager {
                     this.logger.info("You get coin!");
                     break;
                 case ItemSpeedUp:
-                    speed.activate(true, enemyShips);
+                    speedItem.activate(true, enemyShips);
                     break;
                 case ItemSpeedSlow:
-                    speed.activate(false, enemyShips);
+                    speedItem.activate(false, enemyShips);
                     break;
             }
 
@@ -145,14 +140,13 @@ public class ItemManager {
     public void addItemRecycle(Item item) {
         recyclableItems.add(item);
         String itemLog = item.getSpriteType().toString().toLowerCase().substring(4);
-        // Sound Operator
         if (itemLog.equals("coin")){
             sm = SoundManager.getInstance();
             sm.playES("item_coin");
         }
 
         if (!itemLog.equals("coin")) {
-            this.logger.info("get " + itemLog + " item");   // Change log for each item
+            this.logger.info("get " + itemLog + " item"); // Log item pickup
         }
     }
 

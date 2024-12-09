@@ -6,8 +6,6 @@ import java.util.Set;
 /**
  * Implements a pool of recyclable bullets.
  *
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- *
  */
 public final class PiercingBulletPool {
 
@@ -51,8 +49,7 @@ public final class PiercingBulletPool {
     /**
      * Adds one or more bullets to the list of available ones.
      *
-     * @param bullets
-     *            Bullets to recycle.
+     * @param bullets Bullets to recycle
      */
     public static void recycle(final Set<PiercingBullet> bullets) {
         pool.addAll(bullets);

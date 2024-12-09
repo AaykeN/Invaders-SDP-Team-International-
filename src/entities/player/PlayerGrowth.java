@@ -1,20 +1,16 @@
-package entities.player;
-
-import core.Core;
+package Enemy;
+import engine.Core;
 import java.io.IOException;
 
 public class PlayerGrowth {
-
     //Player's base stats
     private int health;          //Health
-    private static double moveSpeed = 1.5;       //Movement speed
-    private static int bulletSpeed = -4;     // Bullet speed
-    private static int shootingDelay = 750;   // Shooting delay
+    private static double moveSpeed = 1.5; //Movement speed
+    private static int bulletSpeed = -4; //Bullet speed
+    private static int shootingDelay = 750; //Shooting delay
 
     //Constructor to set initial values
     public PlayerGrowth() {//  Base shooting delay is 750ms
-
-        // CtrlS: set player growth based on upgrade_status.properties
         try {
             moveSpeed = Core.getUpgradeManager().getMovementSpeed();
             shootingDelay = Core.getUpgradeManager().getAttackSpeed();
@@ -23,53 +19,44 @@ public class PlayerGrowth {
         }
     }
 
-    // Increases health
     public void increaseHealth(int increment) {
-        this.health += increment;
+        this.health += increment; //Increases health
     }
 
-    //Increases movement speed
     public void increaseMoveSpeed(double increment) {
-        this.moveSpeed += increment;
+        this.moveSpeed += increment; //Increases movement speed
     }
 
-    // Increases bullet speed (makes bullets faster)
     public void increaseBulletSpeed(int increment) {
-        this.bulletSpeed -= increment; // Increase by subtracting (since negative speed)
+        this.bulletSpeed -= increment; //Increases bullet speed (makes bullets faster)
     }
 
-    // Decreases shooting delay (makes shooting faster)
     public void decreaseShootingDelay(int decrement) {
         this.shootingDelay -= decrement; //  Decrease delay for faster shooting
         if (this.shootingDelay < 100) {
             this.shootingDelay = 100; // Minimum shooting delay is 100ms
         }
     }
-
-    // reset bullet speed
-    //Edit by inventory
+    
     public void ResetBulletSpeed(){
-        bulletSpeed = -4;
+        bulletSpeed = -4; //reset bullet speed
     }
-
-    // Returns current health
+    
     public int getHealth() {
-        return this.health;
+        return this.health; //Returns current health
     }
 
-    //  Returns current movement speed
+    
     public double getMoveSpeed() {
-        return this.moveSpeed;
+        return this.moveSpeed; // Returns current movement speed
     }
 
-    // Returns current bullet speed
     public int getBulletSpeed() {
-        return this.bulletSpeed;
+        return this.bulletSpeed; //Returns current bullet speed
     }
-
-    //  Returns current shooting delay
+    
     public int getShootingDelay() {
-        return this.shootingDelay;
+        return this.shootingDelay; //Returns current shooting delay
     }
 
     // Prints player stats (for debugging)

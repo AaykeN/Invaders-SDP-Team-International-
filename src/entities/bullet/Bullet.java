@@ -14,38 +14,21 @@ import entities.item.Bomb;
  */
 public class Bullet extends Entity {
 
-	/**
-	 * Speed of the bullet, positive or negative depending on direction -
-	 * positive is down.
-	 */
-	private int speed;
-	// Ctrl S
-	/**
-	 * Check if there is count on the bullet.
-	 * if hit occur then checkCount will be false
-	 */
-	protected boolean checkCount;
-	// Ctrl S
-	/**
-	 * give unique id for certain shot of bullets
-	 */
-	protected int fire_id;
+	private int speed; //Bullet speed, positive for downward movement 
+	protected boolean checkCount; // Tracks if the bullet is counted after hitting a target.
+	protected int fire_id;  // Unique identifier for the bullet.
+	
 	/**
 	 * Constructor, establishes the bullet's properties.
 	 * 
-	 * @param positionX
-	 *            Initial position of the bullet in the X axis.
-	 * @param positionY
-	 *            Initial position of the bullet in the Y axis.
-	 * @param speed
-	 *            Speed of the bullet, positive or negative depending on
-	 *            direction - positive is down.
+	 * @param positionX Initial position of the bullet in the X axis.
+	 * @param positionY Initial position of the bullet in the Y axis.          
+	 * @param speed Speed of the bullet; positive is downward.      
 	 */
+
 	public Bullet(final int positionX, final int positionY, final int speed) {
 		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
-		// CtrlS
 		this.checkCount = true;
-		// CtrlS
 		this.speed = speed;
 		setSprite();
 	}
@@ -58,12 +41,12 @@ public class Bullet extends Entity {
 
 		if (speed < 0) {
 			if(Bomb.getIsBomb() && Bomb.getCanShoot())
-				this.spriteType = SpriteType.ItemBomb;
+				this.spriteType = SpriteType.ItemBomb; 
 			else
-				this.spriteType = SpriteType.Bullet;
+				this.spriteType = SpriteType.Bullet; // Standard player bullet
 		}
 		else
-			this.spriteType = SpriteType.EnemyBullet;
+			this.spriteType = SpriteType.EnemyBullet; // Enemy bullet
 	}
 
 	/**
@@ -74,36 +57,35 @@ public class Bullet extends Entity {
 	}
 
 	/**
-	 * Setter of the speed of the bullet.
+	 * Set the speed of the bullet
 	 * 
-	 * @param speed
-	 *            New speed of the bullet.
+	 * @param speed New speed of the bullet.
 	 */
 	public final void setSpeed(final int speed) {
 		this.speed = speed;
 	}
 
 	/**
-	 * Getter for the speed of the bullet.
+	 * Get the speed of the bullet
 	 * 
-	 * @return Speed of the bullet.
+	 * @return Current bullet speed
 	 */
 	public final int getSpeed() {
 		return this.speed;
 	}
 
 	/**
-	 * Getter for the checkCount of the bullet.
+	 * Checks if the bullet is counted after hitting a target.
 	 *
 	 * @return checkCount of the bullet.
 	 */
 	public final boolean isCheckCount() { return this.checkCount; }
 
 	/**
-	 * Setter for the checkCount of the bullet.
+	 * Sets the bullet's counted status
 	 *
-	 *  @param checkCount
-	 * 	          New checkCount of the bullet.
+	 *  @param checkCount New counted status
+	 * 	          
 	 */
 	public final void setCheckCount(final boolean checkCount) { this.checkCount = checkCount; }
 
@@ -116,8 +98,7 @@ public class Bullet extends Entity {
 	/**
 	 * Setter for the fire_id of the bullet.
 	 *
-	 *  @param id
-	 * 	          New fire_id of the bullet.
+	 *  @param id  New fire_id of the bullet.       
 	 */
 	public final void setFire_id(final int id) { this.fire_id = id; }
 }

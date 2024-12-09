@@ -6,17 +6,15 @@ import java.util.Set;
 /**
  * Implements a pool of recyclable bullets.
  * 
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
  */
 public final class BulletPool {
 
-	/** Set of already created bullets. */
+	/** Stores bullets available for reuse. */
 	private static Set<Bullet> pool = new HashSet<Bullet>();
 
-	/**
-	 * Constructor, not called.
-	 */
+    /**
+     * Private constructor to prevent instantiation.
+     */
 	private BulletPool() {
 
 	}
@@ -34,18 +32,19 @@ public final class BulletPool {
 	 *            on direction - positive is down.
 	 * @return Requested bullet.
 	 */
+
 	public static Bullet getBullet(final int positionX,
 			final int positionY, final int speed) {
 		Bullet bullet;
 		if (!pool.isEmpty()) {
-			bullet = pool.iterator().next();
+			bullet = pool.iterator().next(); // Retrieve a bullet from the pool.
 			pool.remove(bullet);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 			bullet.setPositionY(positionY);
 			bullet.setSpeed(speed);
-			bullet.setSprite();
+			bullet.setSprite(); // Reset its appearance for reuse.
 		} else {
-			bullet = new Bullet(positionX, positionY, speed);
+			bullet = new Bullet(positionX, positionY, speed); // Create a new bullet.
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 		}
 		return bullet;

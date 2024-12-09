@@ -1,69 +1,48 @@
-package entities.player;
+package entity;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.Set;
+import Enemy.PiercingBullet;
+import engine.Cooldown;
+import engine.Core;
+import engine.DrawManager.SpriteType;
+import inventory_develop.Bomb;
+import Enemy.PiercingBulletPool;
+import Sound_Operator.SoundManager; // Sound Operator
+import Enemy.PlayerGrowth; // Import PlayerGrowth class
+import inventory_develop.NumberOfBullet; // Import NumberOfBullet class
+import inventory_develop.ItemBarrierAndHeart; // Import ShipStatus class
+import inventory_develop.ShipStatus; // Tracks the ship's status and attributes.
 
-import entities.bullet.PiercingBullet;
-import core.Cooldown;
-import core.Core;
-import core.DrawManager.SpriteType;
-import entities.base.Entity;
-import entities.item.Bomb;
-// Sound Operator
-import sounds.SoundManager;
-// Import PlayerGrowth class
-// Import NumberOfBullet class
-import entities.bullet.NumberOfBullet;
-// Import ShipStatus class
-import entities.item.Barrier;
-
-/**
- * Implements a ship, to be controlled by the player.
- *
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- *
- */
 public class Ship extends Entity {
-	/** Minimum time between shots. */
-	private Cooldown shootingCooldown;
-	/** Time spent inactive between hits. */
-	private Cooldown destructionCooldown;
-	/** PlayerGrowth 인스턴스 / PlayerGrowth instance */
-	private PlayerGrowth growth;
-	/** ShipStaus instance*/
-	private ShipStatus shipStatus;
-	/** Item */
-	private Barrier item;
-	// Sound Operator
-	private static SoundManager sm;
-	/** NumberOfBullet instance*/
-	private NumberOfBullet numberOfBullet;
+	private Cooldown shootingCooldown; // Minimum time between shots.
+	private Cooldown destructionCooldown; // Time spent inactive between hits
+	private PlayerGrowth growth;  // Tracks and manages player stats
+	private ShipStatus shipStatus;  // Holds ship configuration data.
+	private ItemBarrierAndHeart item; // Handles barrier and health item functionality.
+	private static SoundManager sm; // Plays sound effects.
+	private NumberOfBullet numberOfBullet; // Manages bullet generation.
 
 	/**
-	 * Constructor, establishes the ship's properties.
+	 *  Initializes the ship with default properties and stats.
 	 *
-	 * @param positionX
-	 *            Initial position of the ship in the X axis.
-	 * @param positionY
-	 *            Initial position of the ship in the Y axis.
+	 * @param positionX positionX Initial X position.
+	 * @param positionY positionY Initial Y position.
 	 */
 	//Edit by Enemy
 	public Ship(final int positionX, final int positionY, final Color color) {
-		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // add by team HUD
-
+		super(positionX, positionY - 50, 13 * 2, 8 * 2, color); // Set position, size, and color.
 		this.spriteType = SpriteType.Ship;
 
-		// Create PlayerGrowth object and set initial stats
-		this.growth = new PlayerGrowth();  // PlayerGrowth 객체를 먼저 초기화
-
+		// Initialize player growth and load ship status.
+		this.growth = new PlayerGrowth();  
 		this.shipStatus = new ShipStatus();
 		shipStatus.loadStatus();
 
-		//  Now use the initialized growth object
+		// Set cooldowns based on player stats.
 		this.shootingCooldown = Core.getCooldown(growth.getShootingDelay());
-
 		this.destructionCooldown = Core.getCooldown(1000);
-
 		this.numberOfBullet = new NumberOfBullet();
 	}
 
@@ -72,8 +51,8 @@ public class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveRight() {
-		this.positionX += growth.getMoveSpeed(); //  Use PlayerGrowth for movement speed
-	} //Edit by Enemy
+		this.positionX += growth.getMoveSpeed(); 
+	} 
 
 
 	/**
@@ -82,7 +61,7 @@ public class Ship extends Entity {
 	 */
 	public final void moveLeft() {
 		this.positionX -= growth.getMoveSpeed(); // Use PlayerGrowth for movement speed
-	} //Edit by Enemy
+	}
 
 	/**
 	 * Shoots a bullet upwards.
@@ -93,38 +72,30 @@ public class Ship extends Entity {
 	 *
 	 * You can set Number of enemies the bullet can pierce at here.
 	 */
-	//Edit by Enemy and Inventory
 	public final boolean shoot(final Set<PiercingBullet> bullets) {
 
 		if (this.shootingCooldown.checkFinished()) {
 
 			this.shootingCooldown.reset(); // Reset cooldown after shooting
 
-			// Sound Operator, Apply a Shooting sound
-			sm = SoundManager.getInstance();
+			sm = SoundManager.getInstance(); // Sound Operator, Apply a Shooting sound
 			sm.playES("My_Gun_Shot");
 
 			// Use NumberOfBullet to generate bullets
 			Set<PiercingBullet> newBullets = numberOfBullet.addBullet(
 					positionX + this.width / 2,
 					positionY,
-					growth.getBulletSpeed(), // Use PlayerGrowth for bullet speed
+					growth.getBulletSpeed(), 
 					Bomb.getCanShoot()
 			);
 
-			// now can't shoot bomb
-			Bomb.setCanShoot(false);
-
-			// Add new bullets to the set
+			Bomb.setCanShoot(false); // Prevent shooting bombs immediately.
 			bullets.addAll(newBullets);
 
 			return true;
 		}
 		return false;
 	}
-
-
-
 
 
 	/**
@@ -142,7 +113,6 @@ public class Ship extends Entity {
 	 */
 	public final void destroy() {
 		this.destructionCooldown.reset();
-		// Sound Operator
 		sm = SoundManager.getInstance();
 		sm.playES("ally_airship_damage");
 	}
@@ -156,30 +126,25 @@ public class Ship extends Entity {
 		return !this.destructionCooldown.checkFinished();
 	}
 	/**
-	 * 스탯을 증가시키는 메서드들 (PlayerGrowth 클래스 사용)
 	 * Methods to increase stats (using PlayerGrowth)
 	 */
 
 	// Increases health
-	//Edit by Enemy
 	public void increaseHealth(int increment) {
 		growth.increaseHealth(increment);
 	}
 
 	//  Increases movement speed
-	//Edit by Enemy
 	public void increaseMoveSpeed() {
 		growth.increaseMoveSpeed(shipStatus.getSpeedIn());
 	}
 
 	// Increases bullet speed
-	//Edit by Enemy
 	public void increaseBulletSpeed() {
 		growth.increaseBulletSpeed(shipStatus.getBulletSpeedIn());
 	}
 
 	//  Decreases shooting delay
-	//Edit by Enemy
 	public void decreaseShootingDelay() {
 		growth.decreaseShootingDelay(shipStatus.getSuootingInIn());
 		System.out.println(growth.getShootingDelay());
@@ -203,7 +168,7 @@ public class Ship extends Entity {
 	public final int getBulletSpeed() {
 		int speed = growth.getBulletSpeed();
 		return (speed >= 0) ? speed : -speed;
-	}//by SeungYun TeamHUD
+	}
 
 	public PlayerGrowth getPlayerGrowth() {
 		return growth;
