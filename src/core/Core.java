@@ -32,11 +32,11 @@ public final class Core {
 	private static final int FPS = 60;
 
 	/** Max lives. */
-	public static final int MAX_LIVES = 3; // TEAM CLOVER: Fixed MAX_LIVES from private to public for usage in achievement
+	private static final int MAX_LIVES = 3;
 	/** Levels between extra life. */
-	private static final int EXTRA_LIFE_FRECUENCY = 3;
+	private static final int EXTRA_LIFE_FREQUENCY = 3;
 	/** Total number of levels. */
-	public static final int NUM_LEVELS = 7; // TEAM CLOVER : Fixed NUM_LEVELS from private to public for usage in achievement
+	private static final int NUM_LEVELS = 7;
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
@@ -67,14 +67,13 @@ public final class Core {
 	/** Difficulty settings list. */
 	private static List<GameSettings> gameSettings;
 	/** Application logger. */
-	private static final Logger LOGGER = Logger.getLogger(Core.class
-			.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(Core.class.getSimpleName());
 	/** Logger handler for printing to disk. */
 	private static Handler fileHandler;
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
-	// Sound Operator
-	private static SoundManager sm;
+
+	private static SoundManager soundManager;
     private static AchievementManager achievementManager; // Team CLOVER
 
 	/**
@@ -92,29 +91,31 @@ public final class Core {
 
 			consoleHandler = new ConsoleHandler();
 			consoleHandler.setFormatter(new MinimalFormatter());
-			// Sound Operator
-			sm = SoundManager.getInstance();
+			soundManager = SoundManager.getInstance();
 
 			LOGGER.addHandler(fileHandler);
 			LOGGER.addHandler(consoleHandler);
 			LOGGER.setLevel(Level.ALL);
 
-			// TEAM CLOVER : Added log to check if function is working
 			System.out.println("Initializing AchievementManager...");
 			achievementManager = new AchievementManager(DrawManager.getInstance());
 			System.out.println("AchievementManager initialized!");
 
-			// CtrlS: Make instance of Upgrade Manager
 			Core.getUpgradeManager();
 
-			//Clove. Reset Player Statistics After the Game Starts
 			Statistics statistics = new Statistics();
 			statistics.resetStatistics();
 			LOGGER.info("Reset Player Statistics");
 
+		} catch (IOException ioException) {
+			LOGGER.log(Level.SEVERE, "Failed to initialize file handler for logging", ioException);
+			System.err.println("Critical error: Logging setup failed. Exiting.");
+			System.exit(1);
+		} catch (NullPointerException nullPointerException) {
+			LOGGER.log(Level.SEVERE, "A critical object is null during initialization", nullPointerException);
 		} catch (Exception e) {
-			// TODO handle exception
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "An unexpected error occurred during initialization", e);
+			System.err.println("Initialization failed. Check logs for details.");
 		}
 
 		frame = new Frame(WIDTH, HEIGHT);
@@ -138,9 +139,6 @@ public final class Core {
 
 		int returnCode = 1;
 		do {
-			// Add playtime parameter - Soomin Lee / TeamHUD
-			// Add hitCount parameter - Ctrl S
-			// Add coinItemsCollected parameter - Ctrl S
 			gameState = new GameState(1, 0
 					, MAX_LIVES, 0,0, 0, 0, 0, 0, 0, 0);
 			switch (returnCode) {
@@ -156,13 +154,13 @@ public final class Core {
 				// Game & score.
 				LOGGER.info("Starting inGameBGM");
 				// Sound Operator
-				sm.playES("start_button_ES");
-				sm.playBGM("inGame_bgm");
+				soundManager.playES("start_button_ES");
+				soundManager.playBGM("inGame_bgm");
 
 				do {
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
-							% EXTRA_LIFE_FRECUENCY == 0
+							% EXTRA_LIFE_FREQUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 
 					GameState prevState = gameState;
@@ -183,7 +181,6 @@ public final class Core {
 
 					roundState = new RoundState(prevState, gameState);
 
-					// Add playtime parameter - Soomin Lee / TeamHUD
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
@@ -199,7 +196,7 @@ public final class Core {
 					LOGGER.info("Round Hit Rate: " + roundState.getRoundHitRate());
 					LOGGER.info("Round Time: " + roundState.getRoundTime());
 
-					try { //Clove
+					try {
 						statistics.addTotalPlayTime(roundState.getRoundTime());
 						LOGGER.info("RoundTime Saving");
 					} catch (IOException e){
@@ -208,7 +205,6 @@ public final class Core {
 
 					// Show receiptScreen
 					// If it is not the last round and the game is not over
-					// Ctrl-S
 					if (gameState.getLevel() <= 7 && gameState.getLivesRemaining() > 0) {
 						LOGGER.info("loading receiptScreen");
 						currentScreen = new ReceiptScreen(width, height, FPS, roundState, gameState);
@@ -228,7 +224,7 @@ public final class Core {
 
 				LOGGER.info("Stop InGameBGM");
 				// Sound Operator
-				sm.stopAllBGM();
+				soundManager.stopAllBGM();
 
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
@@ -251,8 +247,8 @@ public final class Core {
 			case 4:
 				LOGGER.info("Starting inGameBGM");
 				// Sound Operator
-				sm.playES("start_button_ES");
-				sm.playBGM("inGame_bgm");
+				soundManager.playES("start_button_ES");
+				soundManager.playBGM("inGame_bgm");
 
 				do {
 					if (gameSettings == null || gameSettings.isEmpty()) {
@@ -268,14 +264,12 @@ public final class Core {
 
 					GameSettings currentGameSettings = gameSettings.get(gameState.getLevel() - 1);
 
-					int fps = FPS;
-					boolean bonusLife = gameState.getLevel() % EXTRA_LIFE_FRECUENCY == 0 &&
+                    boolean bonusLife = gameState.getLevel() % EXTRA_LIFE_FREQUENCY == 0 &&
 							(gameState.getLivesRemaining() < MAX_LIVES || gameState.getLivesTwoRemaining() < MAX_LIVES);
 
 					GameState prevState = gameState;
 
-					// TwoPlayerMode의 생성자를 호출할 때 필요한 매개변수를 모두 전달
-					currentScreen = new TwoPlayerMode(gameState, currentGameSettings, bonusLife, width, height, fps);
+					currentScreen = new TwoPlayerMode(gameState, currentGameSettings, bonusLife, width, height, FPS);
 					currentScreen.setTwoPlayerMode(true);
 					Statistics statistics = new Statistics(); //Clove
 
@@ -286,13 +280,12 @@ public final class Core {
 					LOGGER.info("Closing game screen.");
 
 
-					achievementManager.updateAchievements(currentScreen); // TEAM CLOVER : Achievement
+					achievementManager.updateAchievements(currentScreen);
 
 					gameState = ((TwoPlayerMode) currentScreen).getGameState();
 
 					roundState = new RoundState(prevState, gameState);
 
-					// Add playtime parameter - Soomin Lee / TeamHUD
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
@@ -328,15 +321,14 @@ public final class Core {
 						LOGGER.info("Closing receiptScreen.");
 					}
 
-					if (achievementManager != null) { // TEAM CLOVER : Added code
+					if (achievementManager != null) {
 						achievementManager.updateAchievements(currentScreen);
 					}
 
 				} while ((gameState.getLivesRemaining() > 0 || gameState.getLivesTwoRemaining() > 0) && gameState.getLevel() <= NUM_LEVELS);
 
 				LOGGER.info("Stop InGameBGM");
-				// Sound Operator
-				sm.stopAllBGM();
+				soundManager.stopAllBGM();
 
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
@@ -440,7 +432,6 @@ public final class Core {
 	 *
 	 * @return Application currency manager.
 	 */
-	// Team-Ctrl-S(Currency)
 	public static CurrencyManager getCurrencyManager() {
 		return CurrencyManager.getInstance();
 	}
@@ -450,8 +441,35 @@ public final class Core {
 	 *
 	 * @return Application currency manager.
 	 */
-	// Team-Ctrl-S(Currency)
 	public static UpgradeManager getUpgradeManager() {
 		return UpgradeManager.getInstance();
 	}
+
+	/**
+	 * Get the maximum number of lives.
+	 *
+	 * @return the maximum number of lives.
+	 */
+	public static int getMaxLives() {
+		return MAX_LIVES;
+	}
+
+	/**
+	 * Get the extra life frequency.
+	 *
+	 * @return the number of levels between extra lives.
+	 */
+	public static int getExtraLifeFrequency() {
+		return EXTRA_LIFE_FREQUENCY;
+	}
+
+	/**
+	 * Get the total number of levels.
+	 *
+	 * @return the total number of levels.
+	 */
+	public static int getNumLevels() {
+		return NUM_LEVELS;
+	}
+
 }
