@@ -111,7 +111,7 @@ public class AchievementConditions {
         scoreAchievements.add(new Achievement("Score Hunter", "Reach 5,000 points", 15000, Achievement.AchievementType.SCORE,3));
         scoreAchievements.add(new Achievement("Score Master", "Reach 10,000 points", 30000, Achievement.AchievementType.SCORE,5));
 
-        stageAchievements.add(new Achievement("Home Sweet Home","Cleared Final Stage", Core.NUM_LEVELS, Achievement.AchievementType.STAGE, 5));
+        stageAchievements.add(new Achievement("Home Sweet Home","Cleared Final Stage", Core.getNumLevels(), Achievement.AchievementType.STAGE, 5));
 
         allAchievements.addAll(killAchievements);
         allAchievements.addAll(trialAchievements);
@@ -202,7 +202,7 @@ public class AchievementConditions {
 
     public void checkNoDeathAchievements(int lives) {
         System.out.println("Checking No Death achievements. Current lives: " + lives);
-        if (lives == Core.MAX_LIVES) {
+        if (lives == Core.getMaxLives()) {
             for (Achievement achievement : noDeathAchievements) {
                 if (highestLevel==7 && !achievement.isCompleted()) {
                     completeAchievement(achievement);
